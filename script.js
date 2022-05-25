@@ -13,7 +13,13 @@ function input(value) {
     if (value.match(/[÷x+]/g) && !display.value) return
 
     if (display.value) {
-        if (display.value[display.value.length - 1].match(/[÷x+]/g) && value.match(/[÷x+-]/g)) {
+        if (display.value[display.value.length - 1].match(/[÷x]/g) && value.match(/[÷x]/g)) {
+            backspace()
+        }
+    }
+
+    if (display.value) {
+        if (display.value[display.value.length - 1].match(/[-+]/g) && value.match(/[-+x÷]/g)) {
             backspace()
         }
     }
@@ -43,6 +49,9 @@ function calc() {
     try {
         const expression = display.value.replace(/[÷x]/g, char => ({"÷": "/", "x": "*"})[char])
         const result = parseFloat(eval(expression).toFixed(9))
+        if (!Number.isFinite(result) || Number.isNaN(result)) {
+            throw new Error("Error")
+        }
         display.value = result
         calcRealized = true
 
@@ -50,6 +59,7 @@ function calc() {
 
     } catch (err) {
         error = true
+        console.log(err)
         display.value = "ERROR"
     }
 }
